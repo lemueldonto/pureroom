@@ -1,0 +1,15 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      {{ dashboardTitle }}
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+<iframe [src]="bypassedGrafanaURL" width="450" height="200" frameborder="0"></iframe>
+</mat-card-content>
+<mat-card-actions>
+  <span class="fill-remaining-space"></span>
+  <mat-icon matTooltip="Tooltip">lightbulb</mat-icon>
+</mat-card-actions>
+</mat-card>
+
