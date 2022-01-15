@@ -11,12 +11,16 @@ export class PureroomTitleComponent implements OnInit {
   @Output('toggleSidenav') _toggleSidenav = new EventEmitter();
   @Input('title') title: string = '';
 
-  constructor(private weatherService: WeatherService) { }
+  constructor(public weatherService: WeatherService) { }
 
   ngOnInit(): void {
   }
 
   public toggleSidenav(): void {
     this._toggleSidenav.emit();
+  }
+
+  isCO2Critical(co2: number): boolean {
+    return co2 >= 460;
   }
 }
