@@ -17,6 +17,7 @@ import { PureroomTitleComponent } from './components/pureroom-title/pureroom-tit
 import { MatSidenavModule }       from '@angular/material/sidenav';
 import { MatButtonModule }        from '@angular/material/button';
 import { MatDividerModule }       from '@angular/material/divider';
+import { MatSnackBarModule }      from '@angular/material/snack-bar';
 
 @NgModule({
             declarations: [
@@ -40,6 +41,7 @@ import { MatDividerModule }       from '@angular/material/divider';
               MatSidenavModule,
               MatButtonModule,
               MatDividerModule,
+              MatSnackBarModule,
             ],
             providers:    [],
             bootstrap:    [ AppComponent ],
