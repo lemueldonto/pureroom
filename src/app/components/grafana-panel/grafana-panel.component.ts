@@ -8,9 +8,11 @@ import { DomSanitizer, SafeUrl }    from '@angular/platform-browser';
            })
 export class GrafanaPanelComponent implements OnInit {
 
-  @Input('dashboardTitle') dashboardTitle: string = '';
-
+  @Input('title') title: string = '';
   @Input('grafanaURL') grafanaURL: string = '';
+  @Input('description') description: string = '';
+  // TODO refactor to find a way to use %, possible passing ngStyle
+  @Input('dimensions') dimensions: { width: number, height: number } = { width: 400, height: 200 };
   bypassedGrafanaURL: SafeUrl = '';
 
   constructor(private domSanitizer: DomSanitizer) { }

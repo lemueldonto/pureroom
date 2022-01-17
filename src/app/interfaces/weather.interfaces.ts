@@ -5,3 +5,15 @@ export interface WeatherData {
   co2: number,         // ppm
   airQuality: number,  //
 }
+
+export interface SmokeData {
+  heat: boolean,
+  smoke: boolean,
+}
+
+export interface MultiSensorData {
+  temperature: number,
+  // ultraviolet: number,
+  // luminance: number,
+  relative_humidty: number,
+}

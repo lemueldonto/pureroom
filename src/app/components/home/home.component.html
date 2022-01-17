@@ -1,57 +1,72 @@
-<mat-card class="mat-elevation-z4"
-          *ngIf="(weatherService.weatherData$ | async) as weather">
-  <mat-card-header>
+<div fxLayout="column" fxLayoutGap="8px">
 
-  </mat-card-header>
-  <mat-card-content fxLayout="column">
+  <mat-card class="mat-elevation-z4"
+            *ngIf="(weatherService.weatherData$ | async) as weather">
+    <mat-card-header>
 
-    <div fxFlex fxLayout="row">
-      <span fxFlex="15%"></span>
-      <app-scorebar [airQuality]="weather.airQuality"
-                    class="score"
-                    fxFlex></app-scorebar>
-      <span fxFlex="15%"></span>
-    </div>
+    </mat-card-header>
+    <mat-card-content fxLayout="column">
 
-    <div fxLayout="column" *ngIf="(reportService.summaryData$ | async) as summary">
-      <mat-divider></mat-divider>
-      <div fxLayout="row" fxLayoutAlign="center center">
-        <div fxFlex="30%" fxLayout="row">
-          <span fxFlex></span>
-          <mat-icon>{{ summary.killingStreak > 0 ?
-                       'celebration' :
-                       'sentiment_neutral' }}</mat-icon>
-          <span fxFlex></span>
-        </div>
-        <div fxFlex fxLayout="column">
-          <div fxLayout="row">
-            <p>Killing Streak:</p>
-            <span>{{ summary.killingStreak }}</span>
+      <div fxFlex fxLayout="row">
+        <span fxFlex="15%"></span>
+        <app-scorebar [airQuality]="weather.airQuality"
+                      class="score"
+                      fxFlex></app-scorebar>
+        <span fxFlex="15%"></span>
+      </div>
+
+      <div fxLayout="column" *ngIf="(reportService.summaryData$ | async) as summary">
+        <mat-divider></mat-divider>
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <div fxFlex="30%" fxLayout="row">
+            <span fxFlex></span>
+            <mat-icon>{{ summary.killingStreak > 0 ?
+                         'celebration' :
+                         'sentiment_neutral' }}</mat-icon>
+            <span fxFlex></span>
           </div>
-          <p>{{ summary.killingStreak > 0 ?
-                'Continue doing ? to increase your killing streak' :
-                'Try to do ? to get in a killing streak' }}</p>
+          <div fxFlex fxLayout="column">
+            <div fxLayout="row">
+              <p>Killing Streak:</p>
+              <span>{{ summary.killingStreak }}</span>
+            </div>
+            <p>{{ summary.killingStreak > 0 ?
+                  'Continue doing ? to increase your killing streak' :
+                  'Try to do ? to get in a killing streak' }}</p>
+          </div>
+        </div>
+        <div fxLayout="row">
+          <div fxFlex="30%" fxLayout="row">
+            <span fxFlex></span>
+            <mat-icon>sports_score</mat-icon>
+            <span fxFlex></span>
+          </div>
+          <div fxFlex fxLayout="column">
+            <div fxLayout="row">
+              <p>Yesterday Score:</p>
+              <span>{{ (summary.score * 100)  | number: '2.0-0' }}</span>
+            </div>
+            <p *ngIf="(reportService.analyzeScore$(summary.score) | async) as analysis; else analyzing">
+              {{ analysis }}
+            </p>
+            <ng-template #analyzing>
+              Analyzing...
+            </ng-template>
+          </div>
         </div>
       </div>
-      <div fxLayout="row">
-        <div fxFlex="30%" fxLayout="row">
-          <span fxFlex></span>
-          <mat-icon>sports_score</mat-icon>
-          <span fxFlex></span>
-        </div>
-        <div fxFlex fxLayout="column">
-          <div fxLayout="row">
-            <p>Yesterday Score:</p>
-            <span>{{ (summary.score * 100)  | number: '2.0-0' }}</span>
-          </div>
-          <p *ngIf="(reportService.analyzeScore$(summary.score) | async) as analysis; else analyzing">
-            {{ analysis }}
-          </p>
-          <ng-template #analyzing>
-            Analyzing...
-          </ng-template>
-        </div>
-      </div>
-    </div>
-  </mat-card-content>
-</mat-card>
+    </mat-card-content>
+  </mat-card>
+
+  <div fxLayout="row wrap" fxLayoutGap="30px">
+    <app-grafana-panel *ngFor="let data of grafanaData"
+                       fxFlex
+                       class="panel"
+                       [title]="data.title"
+                       [description]="data.description"
+                       [dimensions]="data.dimensions"
+                       [grafanaURL]="data.url">
+    </app-grafana-panel>
+  </div>
+
+</div>
