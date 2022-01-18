@@ -1,7 +1,8 @@
-import { Component }                                  from '@angular/core';
-import { WeatherService }                             from './services/weather.service';
-import { MatSnackBar }                                from '@angular/material/snack-bar';
-import { combineLatest, interval, map, of, throttle } from 'rxjs';
+import { Component }                                                     from '@angular/core';
+import { WeatherService }                                                from './services/weather.service';
+import { MatSnackBar }                                                   from '@angular/material/snack-bar';
+import { combineLatest, filter, interval, map, of, switchMap, throttle } from 'rxjs';
+import { NotifierService }                                               from './services/notifier.service';
 
 @Component({
              selector:    'app-root',
@@ -12,20 +13,17 @@ export class AppComponent {
   readonly title = 'Pure Room';
 
   constructor(private weatherService: WeatherService,
-              private snackBar: MatSnackBar) {
+              private notifierService: NotifierService) {
     const co2Critical$ = of(460);
-    const co2Data$ = weatherService.weatherData$
-                                   .pipe(throttle(() => interval(60 * 1000)),
-                                         map(data => data.co2));
 
-    combineLatest([ co2Data$, co2Critical$ ])
-      .subscribe(([ co2, co2Critical ]) => {
-        if (co2 > co2Critical) {
-          this.snackBar.open('Critical CO2 Level!', 'Ignore');
-        } else {
-          this.snackBar.dismiss();
-        }
-      });
+    co2Critical$.pipe(switchMap(co2Critical => {
+      return this.weatherService.weatherData$
+                 .pipe(map(data => data.co2),
+                       filter(co2 => co2 >= co2Critical),
+                       throttle(() => interval(15000)));
+    })).subscribe(co2 => {
+      this.notifierService.notify();
+    });
 
   }
 
