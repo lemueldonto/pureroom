@@ -12,6 +12,7 @@ export class ReportService {
   constructor() {
     this._summaryData.next({
                              killingStreak: Math.floor(Math.random() * 7),
+                             scoreLabel:    '', tip: '',
                              score:         .3 * Math.random() + .7,
                            });
   }
