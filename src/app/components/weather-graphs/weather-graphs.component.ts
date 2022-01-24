@@ -2,24 +2,19 @@ import {
     AfterViewInit,
     Component,
     ElementRef,
-    Input,
-    OnChanges, OnDestroy,
+    OnDestroy,
     OnInit,
-    SimpleChanges,
     ViewChild,
-}                                      from '@angular/core';
-import * as d3                         from 'd3';
-import { AxisScale, AxisDomain, zoom } from 'd3';
-import { Subscription }                from 'rxjs';
+}                       from '@angular/core';
+import * as d3          from 'd3';
+import { Subscription } from 'rxjs';
 import {
-    FlatWeatherTimeSeries,
-    SeriesPoint,
-    WeatherData,
+    SeriesPoint, TimeSeries,
     WeatherTimeSeries,
-}                                      from '../../interfaces/weather.interfaces';
+}                       from '../../interfaces/weather.interfaces';
 import {
     WeatherService,
-}                                      from '../../services/weather.service';
+}                       from '../../services/weather.service';
 
 @Component({
                selector:    'app-weather-graphs',
@@ -34,15 +29,19 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
 
     private svg: any = null;
     private graphs: any = null;
-    private dimensions = { width: 300, height: 200 };
+    private dimensions = { width: 300, height: 300 };
     private margin = { top: 10, bottom: 85, left: 15, right: 285 };
 
+    private x_score: any;
+    private y_score: any;
     private x_temp: any;
     private y_temp: any;
     private x_hum: any;
     private y_hum: any;
     private x_co2: any;
     private y_co2: any;
+
+    private scores: TimeSeries = [];
 
     constructor(private weatherService: WeatherService) { }
 
@@ -72,8 +71,26 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     private buildGraph(data: WeatherTimeSeries): void {
-        const flatData = WeatherService.flatTimeSeries(data);
+        // TODO remove
+        let max = -Infinity;
+        let min = +Infinity;
+        data.co2.forEach(({ value }) => {
+            if (value > max)
+                max = value;
+            if (value < min)
+                min = value;
+        });
 
+
+        console.log(max, min);
+        // map co2 between [0, 10]
+        this.scores = data.co2.map(({ value, time }) => ( {
+            value: 10 * ( value - max ) / ( min - max ),
+            time,
+        } ));
+        this.scores = WeatherGraphsComponent.EMA(this.scores);
+
+        const flatData = WeatherService.flatTimeSeries(data);
 
         this.svg = d3.select(this.plotElem.nativeElement)
                      .attr('width', '100%')
@@ -101,10 +118,12 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
             const gap = 10;
             const middle = ( this.margin.left + this.margin.right ) / 2.;
 
+            this.x_score = xScale(domain, [ this.margin.left, this.margin.right ]);
             this.x_co2 = xScale(domain, [ this.margin.left, this.margin.right ]);
             this.x_temp = xScale(domain, [ this.margin.left, middle - gap ]);
             this.x_hum = xScale(domain, [ middle + gap, this.margin.right ]);
 
+            const score_range = d3.extent(this.scores, d => d.value);
             const temp_range = d3.extent(data.temperature, d => d.value);
             const hum_range = d3.extent(data.humidity, d => d.value);
             const co2_range = d3.extent(data.co2, d => d.value);
@@ -115,14 +134,16 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                 this.y_hum = yScale(hum_range);
             if (co2_range[0] !== undefined)
                 this.y_co2 = yScale(co2_range);
+            if (score_range[0] !== undefined)
+                this.y_score = yScale(score_range);
 
-            const addPlot = (points: SeriesPoint[], group: any, x: any, y: any, label: string, id: string, color: string) => {
-                const g = group.append('g');
+            const addPlot = (points: SeriesPoint[], group: any, x: any, y: any, label: string, id: string, className: string,
+                             color: string = 'steelblue',
+                             strokeWidth   = 0.22) => {
+                const g = group.append('g')
+                               .attr('class', className);
 
-                const bottom = y.range()[0];
-                const top = y.range()[0];
-                const left = x.range()[0];
-                const right = x.range()[1];
+                const { bottom, top, left, right } = WeatherGraphsComponent.getMargins(x, y);
 
                 // X-Axis line
                 g.append('g')
@@ -162,7 +183,7 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                  .attr('id', id)
                  .attr('fill', 'none')
                  .attr('stroke', color)
-                 .attr('stroke-width', 0.22)
+                 .attr('stroke-width', strokeWidth)
                  .attr('stroke-linejoin', 'round')
                  .attr('stroke-linecap', 'round')
                  .attr('d', d3.line()
@@ -175,12 +196,59 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
 
             this.graphs = this.svg.append('g');
 
-            addPlot(data.co2, this.graphs, this.x_co2, this.y_co2, 'CO2 [ppm]', 'co2', 'steelblue');
-            addPlot(data.humidity, this.graphs, this.x_hum, this.y_hum, 'Humidity [%]', 'hum', 'steelblue')
-                .attr('transform', `translate(0,${ this.dimensions.height / 2 })`);
-            addPlot(data.temperature, this.graphs, this.x_temp, this.y_temp, 'Temperature [°C]', 'temp', 'steelblue')
-                .attr('transform', `translate(0,${ this.dimensions.height / 2 })`);
+            addPlot(this.scores, this.graphs, this.x_score, this.y_score, 'Score', 'score', 'score', 'darkslateblue', 0.5);
+            addPlot(data.co2, this.graphs, this.x_co2, this.y_co2, 'CO2 [ppm]', 'co2', 'co2')
+                .attr('transform', `translate(0,${ this.dimensions.height / 3 })`);
+            addPlot(data.humidity, this.graphs, this.x_hum, this.y_hum, 'Humidity [%]', 'humidity', 'humidity')
+                .attr('transform', `translate(0,${ 2 * this.dimensions.height / 3 })`);
+            addPlot(data.temperature, this.graphs, this.x_temp, this.y_temp, 'Temperature [°C]', 'temperature', 'temperature')
+                .attr('transform', `translate(0,${ 2 * this.dimensions.height / 3 })`);
+
+            this.addInteractions(this.graphs.select('.score'), this.x_score, this.y_score);
         }
+    }
+
+    private addInteractions(graph: any, x: any, y: any) {
+        const { left, top, right, bottom } = WeatherGraphsComponent.getMargins(x, y);
+        const brush = d3.brushX()
+                        .extent([ [ left, top ], [ right, bottom ] ])
+                        .on('brush end', (event: any) => {
+                            if (event.sourceEvent && event.sourceEvent.type === 'zoom') {
+                                return;
+                            } else {
+                                console.log('brush');
+                                const s = event.selection || x.range();
+                                x.domain(s.map(x.invert, x));
+                                //                         update(this.x);
+                            }
+                        });
+
+        graph.append('g')
+             .attr('class', 'brush')
+             .call(brush)
+             .call(brush.move, x.range());
+    }
+
+    private static getMargins(x: any, y: any): { left: number, right: number, top: number, bottom: number } {
+        return {
+            bottom: y.range()[0],
+            top:    y.range()[0],
+            left:   x.range()[0],
+            right:  x.range()[1],
+        };
+    }
+
+    private static EMA(data: TimeSeries, window = 20): TimeSeries {
+        const weight = 2 / ( window + 10 );
+        return data.reduce((prev: TimeSeries, curr: SeriesPoint): TimeSeries => {
+            if (prev.length > 1) {
+                const EMAy = prev[prev.length - 1].value ?? 0;
+                const EMAt = ( curr.value - EMAy ) * weight + EMAy;
+                return [ ...prev, { value: EMAt, time: curr.time } ];
+            } else {
+                return [ ...prev, curr ];
+            }
+        }, []);
     }
 
 }

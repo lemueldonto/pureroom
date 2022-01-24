@@ -23,10 +23,12 @@ export interface SeriesPoint {
     time: number,
 }
 
+export type TimeSeries = SeriesPoint[];
+
 export interface WeatherTimeSeries {
-    temperature: SeriesPoint[],
-    co2: SeriesPoint[],
-    humidity: SeriesPoint[],
+    temperature: TimeSeries,
+    co2: TimeSeries,
+    humidity: TimeSeries,
 }
 
 export type MeasureTypes = 'temperature' | 'co2' | 'humidity';
