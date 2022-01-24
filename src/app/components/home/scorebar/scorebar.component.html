@@ -1,8 +1,9 @@
 <div #scorebar></div>
 
 <div fxLayout="row">
-  <p fxFlex class="mat-caption">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis excepturi hic ipsa,
-    maxime repellat voluptatibus. Adipisci aut et labore, maiores modi nam nesciunt nobis perferendis rem ullam veniam
-    voluptate, voluptatem.</p>
-  <p fxFlex="30%" class="text-center title">Airquality: {{ airQuality | number: '2.0-0' }}</p>
+    <p fxFlex class="mat-caption">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis excepturi hic ipsa,
+        maxime repellat voluptatibus. Adipisci aut et labore, maiores modi nam nesciunt nobis perferendis rem ullam
+        veniam
+        voluptate, voluptatem.</p>
+    <p fxFlex="30%" class="text-center title">Airquality: {{ (airQuality * 100) | number: '2.0-0' }}</p>
 </div>

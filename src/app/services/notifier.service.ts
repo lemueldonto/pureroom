@@ -33,14 +33,13 @@ export class NotifierService {
     } else {
       this.running = false;
       const snackBarRef = this.snackBar.open('Critical CO2 Level', 'Ignore', { duration });
-
-      const lampOn$ = this.changeLampState(true)
-                          .pipe(switchMapTo(timer(duration)));
-
-      merge(lampOn$, snackBarRef.afterDismissed())
-        .pipe(take(1),
-              switchMap(() => this.changeLampState(false)))
-        .subscribe();
+      // const lampOn$ = this.changeLampState(true)
+      //                     .pipe(switchMapTo(timer(duration)));
+      //
+      // merge(lampOn$, snackBarRef.afterDismissed())
+      //   .pipe(take(1),
+      //         switchMap(() => this.changeLampState(false)))
+      //   .subscribe();
     }
   }
 }

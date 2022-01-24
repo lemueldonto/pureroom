@@ -10,7 +10,7 @@ export class ReportService {
   private _summaryData = new ReplaySubject<SummaryData>(1);
 
   constructor() {
-    this._summaryData.next({
+      this._summaryData.next({
                              killingStreak: Math.floor(Math.random() * 7),
                              scoreLabel:    '', tip: '',
                              score:         .3 * Math.random() + .7,

@@ -1,7 +1,7 @@
 <div fxLayout="column" fxLayoutGap="8px">
 
   <mat-card class="mat-elevation-z4"
-            *ngIf="(weatherService.weatherData$ | async) as weather">
+            *ngIf="(reportService.summaryData$ | async) as summary">
     <mat-card-header>
 
     </mat-card-header>
@@ -9,13 +9,13 @@
 
       <div fxFlex fxLayout="row">
         <span fxFlex="15%"></span>
-        <app-scorebar [airQuality]="weather.airQuality"
+        <app-scorebar [airQuality]="summary.score"
                       class="score"
                       fxFlex></app-scorebar>
         <span fxFlex="15%"></span>
       </div>
 
-      <div fxLayout="column" *ngIf="(reportService.summaryData$ | async) as summary">
+      <div fxLayout="column">
         <mat-divider></mat-divider>
         <div fxLayout="row" fxLayoutAlign="center center">
           <div fxFlex="30%" fxLayout="row">
