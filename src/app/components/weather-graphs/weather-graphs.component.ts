@@ -81,8 +81,6 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                 min = value;
         });
 
-
-        console.log(max, min);
         // map co2 between [0, 10]
         this.scores = data.co2.map(({ value, time }) => ( {
             value: 10 * ( value - max ) / ( min - max ),
@@ -204,12 +202,13 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
             addPlot(data.temperature, this.graphs, this.x_temp, this.y_temp, 'Temperature [°C]', 'temperature', 'temperature')
                 .attr('transform', `translate(0,${ 2 * this.dimensions.height / 3 })`);
 
-            this.addInteractions(this.graphs.select('.score'), this.x_score, this.y_score);
+            this.addInteractions(this.svg, this.x_score, this.y_score);
         }
     }
 
     private addInteractions(graph: any, x: any, y: any) {
         const { left, top, right, bottom } = WeatherGraphsComponent.getMargins(x, y);
+
         const brush = d3.brushX()
                         .extent([ [ left, top ], [ right, bottom ] ])
                         .on('brush end', (event: any) => {
@@ -219,7 +218,6 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                                 console.log('brush');
                                 const s = event.selection || x.range();
                                 x.domain(s.map(x.invert, x));
-                                //                         update(this.x);
                             }
                         });
 
@@ -232,7 +230,7 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
     private static getMargins(x: any, y: any): { left: number, right: number, top: number, bottom: number } {
         return {
             bottom: y.range()[0],
-            top:    y.range()[0],
+            top:    y.range()[1],
             left:   x.range()[0],
             right:  x.range()[1],
         };
