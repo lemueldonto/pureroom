@@ -18,16 +18,24 @@ export interface SmokeData {
     smoke: boolean,
 }
 
-export interface InfluxDBData {
+export interface SeriesPoint {
     value: number,
     time: number,
 }
 
-export interface WeatherTimeseries {
-    temperature: InfluxDBData[],
-    co2: InfluxDBData[],
-    humidity: InfluxDBData[],
+export interface WeatherTimeSeries {
+    temperature: SeriesPoint[],
+    co2: SeriesPoint[],
+    humidity: SeriesPoint[],
 }
+
+export type MeasureTypes = 'temperature' | 'co2' | 'humidity';
+
+export interface LabeledSeriesPoint extends SeriesPoint {
+    label: MeasureTypes;
+}
+
+export type FlatWeatherTimeSeries = LabeledSeriesPoint[];
 
 export enum Polluters {
     'pm25',

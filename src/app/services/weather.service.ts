@@ -1,15 +1,16 @@
 import { Injectable }                                                            from '@angular/core';
 import { combineLatest, map, Observable, ReplaySubject, switchMap, take, timer } from 'rxjs';
 import {
-    InfluxDBData, WeatherData,
+    FlatWeatherTimeSeries, LabeledSeriesPoint,
+    SeriesPoint, MeasureTypes, WeatherData,
     WeatherMockData,
-    WeatherTimeseries,
-} from '../interfaces/weather.interfaces';
+    WeatherTimeSeries,
+}                                                                                from '../interfaces/weather.interfaces';
 import { randomBoxMuller }                                                       from '../libraries/commons.lib';
 import { HttpClient }                                                            from '@angular/common/http';
 
 class InfluxDBFetcher {
-    private _data = new ReplaySubject<InfluxDBData[]>(1);
+    private _data = new ReplaySubject<SeriesPoint[]>(1);
 
     constructor(private baseurl: string,
                 private measure: 'temperature' | 'co2' | 'humidity',
@@ -23,12 +24,12 @@ class InfluxDBFetcher {
             });
     }
 
-    public get data$(): Observable<InfluxDBData[]> {
+    public get data$(): Observable<SeriesPoint[]> {
         return this._data.asObservable();
     }
 
-    private _fetchData(measurement: 'temperature' | 'co2' | 'humidity'): Observable<InfluxDBData[]> {
-        return this.http.get<InfluxDBData[]>(this.baseurl + measurement)
+    private _fetchData(measurement: 'temperature' | 'co2' | 'humidity'): Observable<SeriesPoint[]> {
+        return this.http.get<SeriesPoint[]>(this.baseurl + measurement)
                    .pipe(take(1));
     }
 }
@@ -103,9 +104,6 @@ export class WeatherService {
         timer(0, 1000).subscribe(() => {
             this._weatherData.next(this.genFakeData());
         });
-
-        this.weatherTimeseries$.subscribe(console.log);
-
     }
 
 
@@ -140,24 +138,33 @@ export class WeatherService {
      * TIME SERIES
      *
      */
-    get temperatureTimeSeriesFetcher$(): Observable<InfluxDBData[]> {
+    get temperatureTimeSeriesFetcher$(): Observable<SeriesPoint[]> {
         return this._temperatureTimeSeriesFetcher$.data$;
     }
 
-    get humidityTimeSeriesFetcher$(): Observable<InfluxDBData[]> {
+    get humidityTimeSeriesFetcher$(): Observable<SeriesPoint[]> {
         return this._humidityTimeSeriesFetcher$.data$;
     }
 
-    get co2TimeSeriesFetcher$(): Observable<InfluxDBData[]> {
+    get co2TimeSeriesFetcher$(): Observable<SeriesPoint[]> {
         return this._co2TimeSeriesFetcher$.data$;
     }
 
-    get weatherTimeseries$(): Observable<WeatherTimeseries> {
+    get weatherTimeseries$(): Observable<WeatherTimeSeries> {
         return combineLatest([
                                  this.temperatureTimeSeriesFetcher$,
                                  this.co2TimeSeriesFetcher$,
                                  this.humidityTimeSeriesFetcher$,
                              ])
             .pipe(map(([ temperature, co2, humidity ]) => ( { temperature, co2, humidity } )));
+    }
+
+    public static flatTimeSeries(data: WeatherTimeSeries): FlatWeatherTimeSeries {
+        const addLabel = (label: MeasureTypes) => (d: SeriesPoint) => ( { ...d, label } );
+        const co2 = data.co2.map(addLabel('co2'));
+        const tem = data.temperature.map(addLabel('temperature'));
+        const hum = data.humidity.map(addLabel('humidity'));
+
+        return [ ...tem, ...hum, ...co2 ];
     }
 }
