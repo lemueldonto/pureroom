@@ -202,11 +202,11 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
             addPlot(data.temperature, this.graphs, this.x_temp, this.y_temp, 'Temperature [°C]', 'temperature', 'temperature')
                 .attr('transform', `translate(0,${ 2 * this.dimensions.height / 3 })`);
 
-            this.addInteractions(this.svg, this.x_score, this.y_score);
+            this.addInteractions();
         }
     }
 
-    private addInteractions(graph: any, x: any, y: any) {
+    private addBrush(graph: any, x: any, y: any) {
         const { left, top, right, bottom } = WeatherGraphsComponent.getMargins(x, y);
 
         const brush = d3.brushX()
@@ -225,6 +225,15 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
              .attr('class', 'brush')
              .call(brush)
              .call(brush.move, x.range());
+    }
+
+    private addZoom() {
+
+    }
+
+    private addInteractions() {
+        // this.addZoom(graph, x, y);
+        this.addBrush(this.svg, this.x_score, this.y_score);
     }
 
     private static getMargins(x: any, y: any): { left: number, right: number, top: number, bottom: number } {
