@@ -23,6 +23,7 @@ import {
            })
 export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy {
 
+
     @ViewChild('plot') plotElem!: ElementRef;
 
     private sub: Subscription | null = null;
@@ -54,9 +55,9 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
 
     ngAfterViewInit() {
         this.sub = this.weatherService.weatherTimeseries$
-                       .subscribe(timeseries => {
+                       .subscribe(timeSeries => {
                            this.clear();
-                           this.buildGraph(timeseries);
+                           this.buildGraph(timeSeries);
                        });
     }
 
@@ -95,8 +96,6 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                      .attr('viewBox', `0 0 ${ this.dimensions.width } ${ this.dimensions.height }`)
                      .attr('preserveAspectRatio', 'xMidYMid meet');
 
-        const domain = d3.extent(flatData, d => d.time);
-
         // Y Scales
         const yScale = (domain: [ number, number ]) => d3
             .scaleLinear()
@@ -109,10 +108,12 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
             .scaleTime()
             .domain(domain)
             .range(range)
-            .nice()
+            // .nice()
             .clamp(true);
 
+        const domain = d3.extent(flatData, d => d.time);
         if (domain[0] !== undefined) {
+
             const gap = 10;
             const middle = ( this.margin.left + this.margin.right ) / 2.;
 
@@ -146,7 +147,7 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                 // X-Axis line
                 g.append('g')
                  .attr('transform', `translate(0,${ bottom })`)
-                 .attr('class', 'x-axis')
+                 .attr('class', `${ id }-x-axis`)
                  .attr('stroke-width', 0.1)
                  .style('stroke-dasharray', '1,1')
                  .style('font-size', '2.5')
@@ -191,7 +192,6 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                 return g;
             };
 
-
             this.graphs = this.svg.append('g');
 
             addPlot(this.scores, this.graphs, this.x_score, this.y_score, 'Score', 'score', 'score', 'darkslateblue', 0.5);
@@ -202,7 +202,7 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
             addPlot(data.temperature, this.graphs, this.x_temp, this.y_temp, 'Temperature [°C]', 'temperature', 'temperature')
                 .attr('transform', `translate(0,${ 2 * this.dimensions.height / 3 })`);
 
-            this.addInteractions();
+            this.addBrush(this.svg, this.x_score, this.y_score);
         }
     }
 
@@ -215,9 +215,14 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                             if (event.sourceEvent && event.sourceEvent.type === 'zoom') {
                                 return;
                             } else {
-                                console.log('brush');
                                 const s = event.selection || x.range();
-                                x.domain(s.map(x.invert, x));
+                                const domain = x.domain();
+                                const selection = s.map(x.invert, x);
+                                console.dir({ domain, selection }, { dir: null, colors: true });
+                                // x.domain(s.map(x.invert, x));
+                                this.updateX(selection, 'temperature', 'x_temp', this.y_temp);
+                                this.updateX(selection, 'co2', 'x_co2', this.y_co2);
+                                this.updateX(selection, 'humidity', 'x_hum', this.y_hum);
                             }
                         });
 
@@ -225,15 +230,6 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
              .attr('class', 'brush')
              .call(brush)
              .call(brush.move, x.range());
-    }
-
-    private addZoom() {
-
-    }
-
-    private addInteractions() {
-        // this.addZoom(graph, x, y);
-        this.addBrush(this.svg, this.x_score, this.y_score);
     }
 
     private static getMargins(x: any, y: any): { left: number, right: number, top: number, bottom: number } {
@@ -258,4 +254,20 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
         }, []);
     }
 
+    private updateX(domain: [ number, number ], id: string, x_accessor: 'x_temp' | 'x_hum' | 'x_co2', y: any) {
+
+        this[x_accessor].domain(domain);
+
+        this.svg.select(`#${ id }`)
+            .attr('d', d3.line()
+                         .x((d: any) => this[x_accessor](d.time))
+                         .y((d: any) => y(d.value)));
+
+        const { bottom, top } = WeatherGraphsComponent.getMargins(this[x_accessor], y);
+
+        this.svg.select(`.${ id }-x-axis`)
+            .call(d3.axisBottom(this[x_accessor])
+                    .ticks(10)
+                    .tickSize(top - bottom));
+    }
 }
