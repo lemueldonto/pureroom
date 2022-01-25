@@ -30,8 +30,8 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
 
     private svg: any = null;
     private graphs: any = null;
-    private dimensions = { width: 300, height: 300 };
-    private margin = { top: 10, bottom: 85, left: 15, right: 285 };
+    private dimensions = { width: 300, height: 150 };
+    private margin = { top: 5, bottom: 40, left: 15, right: 285 };
 
     private x_score: any;
     private y_score: any;
@@ -137,8 +137,8 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                 this.y_score = yScale(score_range);
 
             const addPlot = (points: SeriesPoint[], group: any, x: any, y: any, label: string, id: string, className: string,
-                             color: string = 'steelblue',
-                             strokeWidth   = 0.22) => {
+                             color: string = 'darkorange',
+                             strokeWidth   = 0.4) => {
                 const g = group.append('g')
                                .attr('class', className);
 
@@ -172,7 +172,7 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                 // Y-Axis label
                 g.append('text')
                  .attr('text-anchor', 'middle')
-                 .attr('transform', `translate(${ left - 12 },${ 50 }) rotate(-90)`)
+                 .attr('transform', `translate(${ left - 12 },${ bottom / 2 }) rotate(-90)`)
                  .style('font-size', '3.5')
                  .text(label);
 
@@ -194,7 +194,7 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
 
             this.graphs = this.svg.append('g');
 
-            addPlot(this.scores, this.graphs, this.x_score, this.y_score, 'Score', 'score', 'score', 'darkslateblue', 0.5);
+            addPlot(this.scores, this.graphs, this.x_score, this.y_score, 'Score', 'score', 'score', 'darkslateblue', 0.6);
             addPlot(data.co2, this.graphs, this.x_co2, this.y_co2, 'CO2 [ppm]', 'co2', 'co2')
                 .attr('transform', `translate(0,${ this.dimensions.height / 3 })`);
             addPlot(data.humidity, this.graphs, this.x_hum, this.y_hum, 'Humidity [%]', 'humidity', 'humidity')

@@ -75,8 +75,6 @@ class OpenhabFetcher {
             })
 export class WeatherService {
 
-    private _weatherData = new ReplaySubject<WeatherMockData>(1);
-
     // Influx
     readonly influx_baseurl = 'http://localhost:8080/weather/';
     private _temperatureTimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'temperature', this.http);
@@ -89,23 +87,7 @@ export class WeatherService {
     private _humidityDataFetcher$ = new OpenhabFetcher(this.openhab_baseurl + 'IndoorNetatmo02_Humidity', this.http);
     private _co2DataFetcher$ = new OpenhabFetcher(this.openhab_baseurl + 'IndoorNetatmo02_Co2', this.http);
 
-    // TODO delete me
-    private genFakeData = (): WeatherMockData => {
-        return {
-            temperature: randomBoxMuller({ mean: 20, variance: 3, min: 0 }),
-            humidity:    randomBoxMuller({ mean: 67, variance: 5, min: 0 }),
-            co2:         randomBoxMuller({ mean: 460, variance: 50, min: 100 }),
-            cov:         randomBoxMuller({ mean: 6, variance: 3, min: 0 }),
-            airQuality:  randomBoxMuller({ mean: 70, variance: 3, min: 0, max: 100 }),
-        };
-    };
-
-    constructor(private http: HttpClient) {
-        timer(0, 1000).subscribe(() => {
-            this._weatherData.next(this.genFakeData());
-        });
-    }
-
+    constructor(private http: HttpClient) { }
 
     /*
      *

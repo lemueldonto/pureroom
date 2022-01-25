@@ -34,7 +34,7 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
         critical: .2,
     };
 
-    @Input('airQuality') airQuality: number = 0;
+    @Input('score') score: number = 0;
 
     constructor() { }
 
@@ -91,7 +91,7 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
         svg.append('g')
            .attr('class', 'cursor')
            .append('rect')
-           .attr('x', this.airQuality * this.width)
+           .attr('x', this.score * this.width)
            .attr('y', 0)
            .attr('width', 5)
            .attr('height', this.height + this.margin.botttom + this.margin.top)
@@ -102,9 +102,9 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        const currVal = changes['airQuality']?.currentValue;
+        const currVal = changes['score']?.currentValue;
         if (isFinite(currVal)) {
-            const x = this.width *  currVal;
+            const x = this.width * currVal / 10;
             d3.select('.cursor > rect')
               .transition()
               .duration(250)

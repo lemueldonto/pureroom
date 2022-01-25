@@ -9,7 +9,7 @@
 
             <div fxFlex fxLayout="row">
                 <span fxFlex="15%"></span>
-                <app-scorebar [airQuality]="summary.score"
+                <app-scorebar [score]="summary.score"
                               class="score"
                               fxFlex></app-scorebar>
                 <span fxFlex="15%"></span>
@@ -44,7 +44,7 @@
                     <div fxFlex fxLayout="column">
                         <div fxLayout="row">
                             <p>Yesterday Score:</p>
-                            <span>{{ (summary.score * 100)  | number: '2.0-0' }}</span>
+                            <span>{{ summary.score   | number: '1.0-0' }}</span>
                         </div>
                         <p *ngIf="(reportService.analyzeScore$(summary.score) | async) as analysis; else analyzing">
                             {{ analysis }}
