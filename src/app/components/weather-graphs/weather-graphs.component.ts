@@ -216,9 +216,7 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                                 return;
                             } else {
                                 const s = event.selection || x.range();
-                                const domain = x.domain();
                                 const selection = s.map(x.invert, x);
-                                console.dir({ domain, selection }, { dir: null, colors: true });
                                 // x.domain(s.map(x.invert, x));
                                 this.updateX(selection, 'temperature', 'x_temp', this.y_temp);
                                 this.updateX(selection, 'co2', 'x_co2', this.y_co2);

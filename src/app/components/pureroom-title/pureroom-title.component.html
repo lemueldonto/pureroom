@@ -1,26 +1,32 @@
 <mat-toolbar color="primary">
-  <div fxLayoutAlign="center center">
-    <button mat-icon-button (click)="toggleSidenav()">
-      <mat-icon>menu</mat-icon>
-    </button>
-  </div>
-  <span class="fill-remaining-space"></span>
-  <span>{{ title }}</span>
-  <span class="fill-remaining-space"></span>
-  <div *ngIf="(weatherService.weatherData$ | async) as weather"
-       fxFlex="20%"
-       fxLayout="row"
-       fxLayoutAlign="space-between">
-
-    <div [class.critical]="isCO2Critical(weather.co2)" fxLayoutAlign="center center">
-      <mat-icon>co2</mat-icon>
-      {{ weather.co2 | number: '3.0-0' }}ppm
-    </div>
-
     <div fxLayoutAlign="center center">
-      <mat-icon>thermostat</mat-icon>
-      {{ weather.temperature | number: '2.0-0' }}&deg;
+        <button mat-icon-button (click)="toggleSidenav()">
+            <mat-icon>menu</mat-icon>
+        </button>
     </div>
+    <span class="fill-remaining-space"></span>
+    <span>{{ title }}</span>
+    <span class="fill-remaining-space"></span>
+    <div *ngIf="(weatherService.weatherData$ | async) as weather"
+         fxFlex="20%"
+         fxLayout="row"
+         fxLayoutAlign="space-between">
 
-  </div>
+        <div [class.critical]="isCO2Critical(weather.co2)" fxLayoutAlign="center center">
+            <mat-icon>co2</mat-icon>
+            {{ weather.co2 | number: '3.0-0' }}ppm
+        </div>
+
+
+        <div fxLayoutAlign="center center">
+            <mat-icon>water_drop</mat-icon>
+            {{ weather.humidity | number: '2.0-0' }}%
+        </div>
+
+        <div fxLayoutAlign="center center">
+            <mat-icon>thermostat</mat-icon>
+            {{ weather.temperature | number: '2.0-0' }}&deg;C
+        </div>
+
+    </div>
 </mat-toolbar>

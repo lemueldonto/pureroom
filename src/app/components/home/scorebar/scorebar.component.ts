@@ -7,9 +7,9 @@ import {
     OnInit,
     SimpleChanges,
     ViewChild,
-}              from '@angular/core';
-import * as d3 from 'd3';
-import { svg } from 'd3';
+}                           from '@angular/core';
+import * as d3              from 'd3';
+import { ScaleLinear, svg } from 'd3';
 
 
 @Component({
@@ -34,7 +34,8 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
         critical: .2,
     };
 
-    @Input('score') score: number = 0;
+    @Input('score') score: number = 7;
+    x: ScaleLinear<number, number> = d3.scaleLinear();
 
     constructor() { }
 
@@ -49,6 +50,10 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
         const start = this.margin.left;
         const end = this.margin.left + this.width;
         const middle = ( start + end ) / 2.;
+
+        this.x.domain([ 0, 10 ])
+            .range([ start, end ])
+            .clamp(true);
 
         const bars = [
             { fill: 'green', r: 10, x: middle, w: end - middle },
@@ -66,11 +71,6 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
                 w:    ( end - start ) * ( this.scoreFactors.ok - this.scoreFactors.bad ),
             },
         ];
-
-        // svg.append('rect')
-        //    .attr('height', '100%')
-        //    .attr('width', '100%')
-        //    .attr('fill', 'pink');
 
         const scorebarGroup = svg.append('g').attr('class', 'scorebars');
 
@@ -91,7 +91,7 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
         svg.append('g')
            .attr('class', 'cursor')
            .append('rect')
-           .attr('x', this.score * this.width)
+           .attr('x', this.x(this.score))
            .attr('y', 0)
            .attr('width', 5)
            .attr('height', this.height + this.margin.botttom + this.margin.top)
@@ -104,11 +104,10 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         const currVal = changes['score']?.currentValue;
         if (isFinite(currVal)) {
-            const x = this.width * currVal / 10;
             d3.select('.cursor > rect')
               .transition()
               .duration(250)
-              .attr('x', x);
+              .attr('x', this.x(this.score));
         }
     }
 

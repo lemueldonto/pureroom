@@ -1,6 +1,6 @@
 import { Injectable }                         from '@angular/core';
 import { map, Observable, of, ReplaySubject } from 'rxjs';
-import { ScoreRanges, SummaryData }           from '../interfaces/report.interfaces';
+import { SummaryData }                        from '../interfaces/report.interfaces';
 
 @Injectable({
                 providedIn: 'root',
@@ -11,10 +11,11 @@ export class ReportService {
 
     constructor() {
         const clamp = (x: number) => Math.max(Math.min(x, 10), 0);
+        const score = clamp(5 * Math.random() + 5);
         this._summaryData.next({
-                                   killingStreak: Math.floor(Math.random() * 7),
+                                   killingStreak: score >= 7 ? Math.floor(Math.random() * 7) : 0,
                                    scoreLabel:    '', tip: '',
-                                   score:         clamp(3 * Math.random() + 7),
+                                   score:         score,
                                });
     }
 
@@ -22,21 +23,16 @@ export class ReportService {
         return this._summaryData.asObservable();
     }
 
-    public scoreRanges$(): Observable<ScoreRanges> {
-        return of({
-                      critical: [ 0., .2 ],
-                      bad:      [ .2, .5 ],
-                      ok:       [ .5, .7 ],
-                      great:    [ .7, 1. ],
-                  });
+    public scoreRanges$(): Observable<any> {
+        return of(null);
     }
 
-    public analyzeScore(score: number, ranges: ScoreRanges): string {
-        if (score >= ranges.great[0]) {
+    public analyzeScore(score: number, ranges: any): string {
+        if (score >= 7) {
             return 'Great';
-        } else if (score >= ranges.ok[0]) {
+        } else if (score >= 5) {
             return 'Ok';
-        } else if (score >= ranges.bad[0]) {
+        } else if (score >= 2) {
             return 'Bad';
         } else {
             return 'Critical';
