@@ -29,9 +29,10 @@ export interface WeatherTimeSeries {
     temperature: TimeSeries,
     co2: TimeSeries,
     humidity: TimeSeries,
+    scores: TimeSeries,
 }
 
-export type MeasureTypes = 'temperature' | 'co2' | 'humidity';
+export type MeasureTypes = 'temperature' | 'co2' | 'humidity' | 'scores';
 
 export interface LabeledSeriesPoint extends SeriesPoint {
     label: MeasureTypes;
