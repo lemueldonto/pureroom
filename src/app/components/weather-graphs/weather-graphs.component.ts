@@ -183,7 +183,7 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
 
             this.graphs = this.svg.append('g');
 
-            addPlot(WeatherGraphsComponent.EMA(data.scores), this.graphs, this.x_score, this.y_score, 'Score', 'score', 'score', 'darkslateblue', 0.6);
+            addPlot(data.scores, this.graphs, this.x_score, this.y_score, 'Score', 'score', 'score', 'darkslateblue', 0.6);
             addPlot(data.co2, this.graphs, this.x_co2, this.y_co2, 'CO2 [ppm]', 'co2', 'co2')
                 .attr('transform', `translate(0,${ this.dimensions.height / 3 })`);
             addPlot(data.humidity, this.graphs, this.x_hum, this.y_hum, 'Humidity [%]', 'humidity', 'humidity')
@@ -229,7 +229,6 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     private static EMA(data: TimeSeries, window = 20): TimeSeries {
-        return data;
         const weight = 2 / ( window + 10 );
         return data.reduce((prev: TimeSeries, curr: SeriesPoint): TimeSeries => {
             if (prev.length > 1) {
