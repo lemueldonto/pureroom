@@ -10,6 +10,7 @@ import {
 }                           from '@angular/core';
 import * as d3              from 'd3';
 import { ScaleLinear, svg } from 'd3';
+import { SeriesPoint }      from '../../../interfaces/weather.interfaces';
 
 
 @Component({
@@ -34,7 +35,7 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
         critical: .2,
     };
 
-    @Input('score') score: number = 7;
+    @Input('score') score: SeriesPoint = { time: Date.now(), value: 7 };
     x: ScaleLinear<number, number> = d3.scaleLinear();
 
     constructor() { }
@@ -91,7 +92,7 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
         svg.append('g')
            .attr('class', 'cursor')
            .append('rect')
-           .attr('x', this.x(this.score))
+           .attr('x', this.x(this.score.value))
            .attr('y', 0)
            .attr('width', 5)
            .attr('height', this.height + this.margin.botttom + this.margin.top)
@@ -107,7 +108,7 @@ export class ScorebarComponent implements OnInit, AfterViewInit, OnChanges {
             d3.select('.cursor > rect')
               .transition()
               .duration(250)
-              .attr('x', this.x(this.score));
+              .attr('x', this.x(this.score.value));
         }
     }
 

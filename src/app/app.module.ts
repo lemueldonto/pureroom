@@ -20,6 +20,7 @@ import { MatDividerModule }       from '@angular/material/divider';
 import { MatSnackBarModule }      from '@angular/material/snack-bar';
 import { HttpClientModule }       from '@angular/common/http';
 import { WeatherGraphsComponent } from './components/weather-graphs/weather-graphs.component';
+import { AvatarComponent } from './components/avatar/avatar.component';
 
 @NgModule({
             declarations: [
@@ -30,6 +31,7 @@ import { WeatherGraphsComponent } from './components/weather-graphs/weather-grap
               ScorebarComponent,
               PureroomTitleComponent,
               WeatherGraphsComponent,
+              AvatarComponent,
             ],
             imports: [
               BrowserModule,
