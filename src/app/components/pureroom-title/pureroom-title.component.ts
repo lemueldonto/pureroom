@@ -21,6 +21,6 @@ export class PureroomTitleComponent implements OnInit {
   }
 
   isCO2Critical(co2: number): boolean {
-    return co2 >= 500;
+    return co2 >= 1000;
   }
 }
