@@ -1,45 +1,59 @@
-import { Injectable }                         from '@angular/core';
-import { map, Observable, of, ReplaySubject } from 'rxjs';
-import { SummaryData }                        from '../interfaces/report.interfaces';
+import { Injectable }         from '@angular/core';
+import { WeatherService }     from './weather.service';
+import { SeriesPoint }        from '@interfaces/weather.interfaces';
+import { map }                from 'rxjs/operators';
+import { Observable }         from 'rxjs';
+import { environment as env } from '@env';
+
+
+export interface IMGAttributes {
+    src: string,
+    alt: string
+}
 
 @Injectable({
                 providedIn: 'root',
             })
 export class ReportService {
 
-    private _summaryData = new ReplaySubject<SummaryData>(1);
+    private avatarMap: Map<number, IMGAttributes> =
+                new Map<number, IMGAttributes>([
+                                                   [ 0, { src: 'plant0', alt: 'dead plant' } ],
+                                                   [ 1, { src: 'plant1', alt: 'dying plant' } ],
+                                                   [ 2, { src: 'plant2', alt: 'diseased plant' } ],
+                                                   [ 3, { src: 'plant3', alt: 'living plant' } ],
+                                               ]);
 
-    constructor() {
-        const clamp = (x: number) => Math.max(Math.min(x, 10), 0);
-        const score = clamp(5 * Math.random() + 5);
-        this._summaryData.next({
-                                   killingStreak: score >= 7 ? Math.floor(Math.random() * 7) : 0,
-                                   scoreLabel:    '', tip: '',
-                                   score:         score,
-                               });
+    constructor(private weatherService: WeatherService) {
     }
 
-    get summaryData$(): Observable<SummaryData> {
-        return this._summaryData.asObservable();
+    public get score$(): Observable<SeriesPoint> {
+        return this.weatherService.scoreTimeSeriesFetcher$
+                   .pipe(map(arr => arr[arr.length - 1]));
     }
 
-    public scoreRanges$(): Observable<any> {
-        return of(null);
+    public get avatar$(): Observable<IMGAttributes> {
+        const discretize = ({ value: score }: SeriesPoint): number => {
+            if (score < 3)
+                return 0;
+            else if (score < 5)
+                return 1;
+            else if (score < 7)
+                return 2;
+            else
+                return 3;
+        };
+
+        const toAsset = (attrs: IMGAttributes): IMGAttributes => ( {
+            ...attrs,
+            src: env.avatarDir + attrs.src + '.png',
+        } );
+
+        return this.score$
+                   .pipe(map(discretize),
+                         map((key: number) => this.avatarMap.get(key)!),
+                         map(toAsset),
+                   );
     }
 
-    public analyzeScore(score: number, ranges: any): string {
-        if (score >= 7) {
-            return 'Great';
-        } else if (score >= 5) {
-            return 'Ok';
-        } else if (score >= 2) {
-            return 'Bad';
-        } else {
-            return 'Critical';
-        }
-    }
-
-    public analyzeScore$(score: number): Observable<string> {
-        return this.scoreRanges$().pipe(map(ranges => this.analyzeScore(score, ranges)));
-    }
 }

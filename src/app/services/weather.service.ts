@@ -1,19 +1,20 @@
-import { Injectable }                                                            from '@angular/core';
-import { combineLatest, map, Observable, ReplaySubject, switchMap, take, timer } from 'rxjs';
+import { Injectable }                                                                 from '@angular/core';
+import { combineLatest, map, Observable, ReplaySubject, switchMap, take, tap, timer } from 'rxjs';
 import {
     FlatWeatherTimeSeries, LabeledSeriesPoint,
     SeriesPoint, MeasureTypes, WeatherData,
     WeatherMockData,
     WeatherTimeSeries,
-}                                                                                from '../interfaces/weather.interfaces';
+}                                                                                     from '../interfaces/weather.interfaces';
 import { randomBoxMuller }                                                       from '../libraries/commons.lib';
 import { HttpClient }                                                            from '@angular/common/http';
+
 
 class InfluxDBFetcher {
     private _data = new ReplaySubject<SeriesPoint[]>(1);
 
     constructor(private baseurl: string,
-                private measure: 'temperature' | 'co2' | 'humidity',
+                private measure: MeasureTypes,
                 private http: HttpClient,
                 private timeout = 5 * 60 * 1000) {
 
@@ -28,7 +29,7 @@ class InfluxDBFetcher {
         return this._data.asObservable();
     }
 
-    private _fetchData(measurement: 'temperature' | 'co2' | 'humidity'): Observable<SeriesPoint[]> {
+    private _fetchData(measurement: MeasureTypes): Observable<SeriesPoint[]> {
         return this.http.get<SeriesPoint[]>(this.baseurl + measurement)
                    .pipe(take(1));
     }
@@ -80,6 +81,7 @@ export class WeatherService {
     private _temperatureTimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'temperature', this.http);
     private _humidityTimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'humidity', this.http);
     private _co2TimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'co2', this.http);
+    private _scoreTimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'scores', this.http);
 
     // Openhab
     readonly openhab_baseurl = 'https://openhab.ubiquarium.fr/rest/items/';
@@ -132,13 +134,18 @@ export class WeatherService {
         return this._co2TimeSeriesFetcher$.data$;
     }
 
+    get scoreTimeSeriesFetcher$(): Observable<SeriesPoint[]> {
+        return this._scoreTimeSeriesFetcher$.data$;
+    }
+
     get weatherTimeseries$(): Observable<WeatherTimeSeries> {
         return combineLatest([
                                  this.temperatureTimeSeriesFetcher$,
                                  this.co2TimeSeriesFetcher$,
                                  this.humidityTimeSeriesFetcher$,
+                                 this.scoreTimeSeriesFetcher$,
                              ])
-            .pipe(map(([ temperature, co2, humidity ]) => ( { temperature, co2, humidity } )));
+            .pipe(map(([ temperature, co2, humidity, scores ]) => ( { temperature, co2, humidity, scores } )))
     }
 
     public static flatTimeSeries(data: WeatherTimeSeries): FlatWeatherTimeSeries {
@@ -146,7 +153,8 @@ export class WeatherService {
         const co2 = data.co2.map(addLabel('co2'));
         const tem = data.temperature.map(addLabel('temperature'));
         const hum = data.humidity.map(addLabel('humidity'));
+        const scr = data.scores.map(addLabel('scores'));
 
-        return [ ...tem, ...hum, ...co2 ];
+        return [ ...tem, ...hum, ...co2, ...scr ];
     }
 }

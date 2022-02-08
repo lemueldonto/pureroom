@@ -23,7 +23,6 @@ import {
            })
 export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy {
 
-
     @ViewChild('plot') plotElem!: ElementRef;
 
     private sub: Subscription | null = null;
@@ -41,8 +40,6 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
     private y_hum: any;
     private x_co2: any;
     private y_co2: any;
-
-    private scores: TimeSeries = [];
 
     constructor(private weatherService: WeatherService) { }
 
@@ -82,13 +79,6 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
                 min = value;
         });
 
-        // map co2 between [0, 10]
-        this.scores = data.co2.map(({ value, time }) => ( {
-            value: 10 * ( value - max ) / ( min - max ),
-            time,
-        } ));
-        this.scores = WeatherGraphsComponent.EMA(this.scores);
-
         const flatData = WeatherService.flatTimeSeries(data);
 
         this.svg = d3.select(this.plotElem.nativeElement)
@@ -113,7 +103,6 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
 
         const domain = d3.extent(flatData, d => d.time);
         if (domain[0] !== undefined) {
-
             const gap = 10;
             const middle = ( this.margin.left + this.margin.right ) / 2.;
 
@@ -122,7 +111,7 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
             this.x_temp = xScale(domain, [ this.margin.left, middle - gap ]);
             this.x_hum = xScale(domain, [ middle + gap, this.margin.right ]);
 
-            const score_range = d3.extent(this.scores, d => d.value);
+            const score_range = d3.extent([0, 10]);
             const temp_range = d3.extent(data.temperature, d => d.value);
             const hum_range = d3.extent(data.humidity, d => d.value);
             const co2_range = d3.extent(data.co2, d => d.value);
@@ -194,7 +183,7 @@ export class WeatherGraphsComponent implements OnInit, AfterViewInit, OnDestroy 
 
             this.graphs = this.svg.append('g');
 
-            addPlot(this.scores, this.graphs, this.x_score, this.y_score, 'Score', 'score', 'score', 'darkslateblue', 0.6);
+            addPlot(data.scores, this.graphs, this.x_score, this.y_score, 'Score', 'score', 'score', 'darkslateblue', 0.6);
             addPlot(data.co2, this.graphs, this.x_co2, this.y_co2, 'CO2 [ppm]', 'co2', 'co2')
                 .attr('transform', `translate(0,${ this.dimensions.height / 3 })`);
             addPlot(data.humidity, this.graphs, this.x_hum, this.y_hum, 'Humidity [%]', 'humidity', 'humidity')

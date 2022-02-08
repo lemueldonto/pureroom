@@ -1,0 +1,3 @@
+<img *ngIf="(reportService.avatar$ | async) as avatar"
+     [src]="avatar.src"
+     [alt]="avatar.alt">

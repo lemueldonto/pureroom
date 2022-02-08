@@ -24,6 +24,8 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { HeaderbarComponent } from './components/headerbar/headerbar.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { AvatarComponent } from './components/avatar/avatar.component';
+
 
 @NgModule({
             declarations: [
@@ -38,6 +40,7 @@ import { NavbarComponent } from './components/navbar/navbar.component';
               HeaderbarComponent,
               SidebarComponent,
               NavbarComponent,
+              AvatarComponent,
             ],
             imports: [
               BrowserModule,
