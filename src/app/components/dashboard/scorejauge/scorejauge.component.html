@@ -1,0 +1,27 @@
+<div class="card d-flex">
+    <div class="card-header pb-0 px-3">
+        <h3 class="mb-0">Score Jauge</h3>
+    </div>
+    <div class="card-body pt-4 p-3">
+        <ul class="list-group">
+            <li class="list-group-item border-0 d-flex p-4 mb-2 border-radius-lg border-primary">
+                <ejs-circulargauge id='circular-container' height='600px' width='620px'>
+                    <e-axes>
+                        <e-axis minimum=0 maximum=10 startAngle=270 endAngle=90>
+                            <e-pointers>
+                                <e-pointer value={{this.score}}></e-pointer>
+                                <e-ranges>
+                                    <e-range start=0 end=2.5 radius='108%' color="#8A0808"></e-range>
+                                    <e-range start=2.5 end=5 radius='70%' color="#FF0000"></e-range>
+                                    <e-range start=5 end=7.5 radius='70%' color="#FACC2E"></e-range>
+                                    <e-range start=7.5 end=10 radius='108%' color="#088A29"></e-range>
+                                </e-ranges>
+                            </e-pointers>
+                        </e-axis>
+                    </e-axes>
+                </ejs-circulargauge>
+            </li>
+        </ul>
+    </div>
+</div>
+

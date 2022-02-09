@@ -1,10 +1,19 @@
-
-
 <div class="g-sidenav-show  bg-gray-100">
     <app-sidebar class="sidenav navbar navbar-vertical navbar-expand-xs border-0 border-radius-xl my-3 fixed-start ms-3 " id="sidenav-main"></app-sidebar>
     <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ">
         <app-navbar></app-navbar>
+        <div class="row">
+            <div class="col-md-7 mt-4">
+                <app-scorejauge [score]="7"></app-scorejauge>
+            </div>
+            <div class="col-md-5 mt-4">
+                <app-avatar></app-avatar>
+            </div>
+            <app-weather-graphs></app-weather-graphs>
+        </div>
+
     </main>
+
 </div>
 
 

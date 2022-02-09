@@ -11,10 +11,10 @@ import { Subscription } from 'rxjs';
 import {
     SeriesPoint, TimeSeries,
     WeatherTimeSeries,
-}                       from '../../interfaces/weather.interfaces';
+}                       from '@interfaces/weather.interfaces';
 import {
     WeatherService,
-}                       from '../../services/weather.service';
+}                       from '@services/weather.service';
 
 @Component({
                selector:    'app-weather-graphs',
