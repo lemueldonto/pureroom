@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import {SeriesPoint} from "@interfaces/weather.interfaces";
 import {ReportService} from "@services/report.service";
-
 @Component({
                selector:    'app-avatar',
                templateUrl: './avatar.component.html',
