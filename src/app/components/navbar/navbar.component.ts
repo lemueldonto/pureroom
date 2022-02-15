@@ -16,6 +16,7 @@ function isNonNull<T>(value: T): value is NonNullable<T> {
 export class NavbarComponent implements OnInit {
 
     public readonly scoreBuffer$: Observable<{ curr: SeriesPoint, prev: SeriesPoint | null }>;
+    isSimulating: boolean = false;
 
     private static sndIsNonNull<T>(tuple: [ T, T ]): tuple is [ T, NonNullable<T> ] {
         return isNonNull(tuple[ 1 ]);

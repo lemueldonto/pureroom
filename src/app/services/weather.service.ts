@@ -110,7 +110,7 @@ class OpenhabFetcher implements AbstractFetcher<number> {
 export class WeatherService {
 
     // Influx
-    readonly influx_baseurl = 'http://localhost:8080/weather/';
+    readonly influx_baseurl = 'http://localhost:8081/weather/';
     private _temperatureTimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'temperature', this.http);
     private _humidityTimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'humidity', this.http);
     private _co2TimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'co2', this.http);

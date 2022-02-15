@@ -3,5 +3,5 @@ export const environment = {
 
     avatarDir: './assets/avatars/plant/',
 
-    scoreUrl: 'http://localhost:3001',
+    scoreUrl: 'http://localhost:8080',
 };

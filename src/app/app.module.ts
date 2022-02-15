@@ -30,6 +30,7 @@ import { ScorejaugeComponent }    from './components/dashboard/scorejauge/scorej
 import { VirtualroomComponent }   from './components/virtualroom/virtualroom.component';
 import { SignPipe }               from './pipes/sign.pipe';
 import { MatSlideToggleModule }   from '@angular/material/slide-toggle';
+import { FormsModule }            from '@angular/forms';
 
 
 @NgModule({
@@ -67,6 +68,7 @@ import { MatSlideToggleModule }   from '@angular/material/slide-toggle';
         MatSnackBarModule,
         CircularGaugeModule,
         MatSlideToggleModule,
+        FormsModule,
     ],
             providers:    [],
             bootstrap:    [ AppComponent ],
