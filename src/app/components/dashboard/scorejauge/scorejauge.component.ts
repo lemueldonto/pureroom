@@ -6,7 +6,7 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./scorejauge.component.css']
 })
 export class ScorejaugeComponent implements OnInit {
-    @Input() score?: number;
+    @Input('score') score: number = 10;
 
   constructor() { }
 

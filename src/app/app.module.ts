@@ -20,15 +20,16 @@ import { MatDividerModule }       from '@angular/material/divider';
 import { MatSnackBarModule }      from '@angular/material/snack-bar';
 import { HttpClientModule }       from '@angular/common/http';
 import { WeatherGraphsComponent } from '@components/weather-graphs/weather-graphs.component';
-import { DashboardComponent } from '@components/dashboard/dashboard.component';
-import { HeaderbarComponent } from '@components/headerbar/headerbar.component';
-import { SidebarComponent } from '@components/sidebar/sidebar.component';
-import { NavbarComponent } from '@components/navbar/navbar.component';
-import { AvatarComponent } from '@components/avatar/avatar.component';
-import {CircularGaugeModule} from "@syncfusion/ej2-angular-circulargauge";
-import { ScorejaugeComponent } from './components/dashboard/scorejauge/scorejauge.component';
-import { VirtualroomComponent } from './components/virtualroom/virtualroom.component';
-import { SignPipe } from './pipes/sign.pipe';
+import { DashboardComponent }     from '@components/dashboard/dashboard.component';
+import { HeaderbarComponent }     from '@components/headerbar/headerbar.component';
+import { SidebarComponent }       from '@components/sidebar/sidebar.component';
+import { NavbarComponent }        from '@components/navbar/navbar.component';
+import { AvatarComponent }        from '@components/avatar/avatar.component';
+import {CircularGaugeModule}      from "@syncfusion/ej2-angular-circulargauge";
+import { ScorejaugeComponent }    from './components/dashboard/scorejauge/scorejauge.component';
+import { VirtualroomComponent }   from './components/virtualroom/virtualroom.component';
+import { SignPipe }               from './pipes/sign.pipe';
+import { MatSlideToggleModule }   from '@angular/material/slide-toggle';
 
 
 @NgModule({
@@ -49,23 +50,24 @@ import { SignPipe } from './pipes/sign.pipe';
               VirtualroomComponent,
               SignPipe,
             ],
-            imports: [
-              BrowserModule,
-              BrowserAnimationsModule,
-              HttpClientModule,
-              AppRoutingModule,
-              MatToolbarModule,
-              MatCardModule,
-              MatIconModule,
-              MatTooltipModule,
-              AppRoutingModule,
-              FlexModule,
-              MatSidenavModule,
-              MatButtonModule,
-              MatDividerModule,
-              MatSnackBarModule,
-                CircularGaugeModule
-            ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        AppRoutingModule,
+        MatToolbarModule,
+        MatCardModule,
+        MatIconModule,
+        MatTooltipModule,
+        AppRoutingModule,
+        FlexModule,
+        MatSidenavModule,
+        MatButtonModule,
+        MatDividerModule,
+        MatSnackBarModule,
+        CircularGaugeModule,
+        MatSlideToggleModule,
+    ],
             providers:    [],
             bootstrap:    [ AppComponent ],
           })
