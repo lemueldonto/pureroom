@@ -20,17 +20,19 @@ import { MatDividerModule }       from '@angular/material/divider';
 import { MatSnackBarModule }      from '@angular/material/snack-bar';
 import { HttpClientModule }       from '@angular/common/http';
 import { WeatherGraphsComponent } from '@components/weather-graphs/weather-graphs.component';
-import { DashboardComponent }     from '@components/dashboard/dashboard.component';
-import { HeaderbarComponent }     from '@components/headerbar/headerbar.component';
-import { SidebarComponent }       from '@components/sidebar/sidebar.component';
-import { NavbarComponent }        from '@components/navbar/navbar.component';
-import { AvatarComponent }        from '@components/avatar/avatar.component';
-import {CircularGaugeModule}      from "@syncfusion/ej2-angular-circulargauge";
-import { ScorejaugeComponent }    from './components/dashboard/scorejauge/scorejauge.component';
-import { VirtualroomComponent }   from './components/virtualroom/virtualroom.component';
-import { SignPipe }               from './pipes/sign.pipe';
-import { MatSlideToggleModule }   from '@angular/material/slide-toggle';
-import { FormsModule }            from '@angular/forms';
+import { DashboardComponent }               from '@components/dashboard/dashboard.component';
+import { HeaderbarComponent }               from '@components/headerbar/headerbar.component';
+import { SidebarComponent }                 from '@components/sidebar/sidebar.component';
+import { NavbarComponent }                  from '@components/navbar/navbar.component';
+import { AvatarComponent }                  from '@components/avatar/avatar.component';
+import {CircularGaugeModule}                from "@syncfusion/ej2-angular-circulargauge";
+import { ScorejaugeComponent }              from './components/dashboard/scorejauge/scorejauge.component';
+import { VirtualroomComponent }             from './components/virtualroom/virtualroom.component';
+import { SignPipe }                         from './pipes/sign.pipe';
+import { MatSlideToggleModule }             from '@angular/material/slide-toggle';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule }               from '@angular/material/form-field';
+import { MatInputModule }                   from '@angular/material/input';
 
 
 @NgModule({
@@ -69,6 +71,9 @@ import { FormsModule }            from '@angular/forms';
         CircularGaugeModule,
         MatSlideToggleModule,
         FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
     ],
             providers:    [],
             bootstrap:    [ AppComponent ],

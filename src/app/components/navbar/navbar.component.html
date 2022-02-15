@@ -38,14 +38,13 @@
                     </li>
                 </ul>
                 <div>
-                    <mat-slide-toggle [(ngModel)]="isSimulating">Simuler</mat-slide-toggle>
-
+                    <mat-slide-toggle (change)="toggleSimulation($event)">Simuler</mat-slide-toggle>
                 </div>
             </div>
         </div>
     </nav>
     <!-- End Navbar -->
-    <div *ngIf="(weatherService.weatherData$ | async) as weather" class="container-fluid py-4">
+    <form [formGroup]="form" *ngIf="(weatherService.weatherData$ | async) as weather" class="container-fluid py-4">
         <div class="row">
             <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
                 <div class="card">
@@ -54,10 +53,17 @@
                             <div class="col-8">
                                 <div class="numbers">
                                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Température</p>
-                                    <h2 class="font-weight-bolder mb-0">
+                                    <h2 *ngIf="!(isSimulating$ | async)"
+                                        class="font-weight-bolder mb-0">
                                         {{ weather.temperature | number: '2.0-0' }}&deg;C
                                         <!--                                        <span class="text-success text-sm font-weight-bolder">+5</span>-->
                                     </h2>
+
+                                    <mat-form-field *ngIf="isSimulating$ | async">
+                                        <input matInput type="number" formControlName="temperature">
+                                        <span matSuffix>&deg;C</span>
+                                    </mat-form-field>
+
                                 </div>
                             </div>
                             <div class="col-4 text-end">
@@ -77,10 +83,16 @@
                             <div class="col-8">
                                 <div class="numbers">
                                     <p class="text-sm mb-0 text-capitalize font-weight-bold">C02</p>
-                                    <h2 class="font-weight-bolder mb-0">
+                                    <h2 *ngIf="!(isSimulating$ | async)" class="font-weight-bolder mb-0">
                                         {{ weather.co2 | number: '3.0-0' }}
                                         <!--                                        <span class="text-success text-sm font-weight-bolder">+3</span>-->
                                     </h2>
+
+                                    <mat-form-field *ngIf="isSimulating$ | async">
+                                        <input matInput type="number" formControlName="co2">
+                                        <span matSuffix>ppm</span>
+                                    </mat-form-field>
+
                                 </div>
                             </div>
                             <div class="col-4 text-end">
@@ -99,10 +111,15 @@
                             <div class="col-8">
                                 <div class="numbers">
                                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Humidité</p>
-                                    <h2 class="font-weight-bolder mb-0">
+                                    <h2 *ngIf="!(isSimulating$ | async)" class="font-weight-bolder mb-0">
                                         {{ weather.humidity | number: '2.0-0' }}%
                                         <!--                                        <span class="text-danger text-sm font-weight-bolder">-2</span>-->
                                     </h2>
+
+                                    <mat-form-field *ngIf="isSimulating$ | async">
+                                        <input matInput type="number" formControlName="humidity">
+                                        <span matSuffix>%</span>
+                                    </mat-form-field>
                                 </div>
                             </div>
                             <div class="col-4 text-end">
@@ -147,5 +164,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </form>
 </div>
