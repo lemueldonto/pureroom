@@ -28,6 +28,7 @@ import { AvatarComponent } from '@components/avatar/avatar.component';
 import {CircularGaugeModule} from "@syncfusion/ej2-angular-circulargauge";
 import { ScorejaugeComponent } from './components/dashboard/scorejauge/scorejauge.component';
 import { VirtualroomComponent } from './components/virtualroom/virtualroom.component';
+import { SignPipe } from './pipes/sign.pipe';
 
 
 @NgModule({
@@ -46,6 +47,7 @@ import { VirtualroomComponent } from './components/virtualroom/virtualroom.compo
               AvatarComponent,
               ScorejaugeComponent,
               VirtualroomComponent,
+              SignPipe,
             ],
             imports: [
               BrowserModule,

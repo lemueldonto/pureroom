@@ -22,7 +22,7 @@ class ScoreFetcher implements AbstractFetcher<SeriesPoint[]> {
                 private http: HttpClient,
                 private timeout = 5 * 60 * 1000) {
 
-        timer(0, timeout)
+        timer(0, 1000)
             .subscribe(() => {
                 this._fetchData()
                     .pipe(map(scores => scores.map(({ value, time }) => ( {
