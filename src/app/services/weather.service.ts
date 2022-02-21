@@ -20,9 +20,9 @@ class ScoreFetcher implements AbstractFetcher<SeriesPoint[]> {
 
     constructor(private url: string,
                 private http: HttpClient,
-                private timeout = 5 * 60 * 1000) {
+                private timeout = 60 * 1000) {
 
-        timer(0, 1000)
+        timer(0, timeout)
             .subscribe(() => {
                 this._fetchData()
                     .pipe(map(scores => scores.map(({ value, time }) => ( {
@@ -110,22 +110,26 @@ class OpenhabFetcher implements AbstractFetcher<number> {
 export class WeatherService {
 
     // Influx
-    readonly influx_baseurl = 'http://localhost:8081/weather/';
-    private _temperatureTimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'temperature', this.http);
-    private _humidityTimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'humidity', this.http);
-    private _co2TimeSeriesFetcher$ = new InfluxDBFetcher(this.influx_baseurl, 'co2', this.http);
+    private _temperatureTimeSeriesFetcher$ = new InfluxDBFetcher(env.influxUrl, 'temperature', this.http);
+    private _humidityTimeSeriesFetcher$ = new InfluxDBFetcher(env.influxUrl, 'humidity', this.http);
+    private _co2TimeSeriesFetcher$ = new InfluxDBFetcher(env.influxUrl, 'co2', this.http);
 
     // Openhab
-    readonly openhab_baseurl = 'https://openhab.ubiquarium.fr/rest/items/';
-    private _temperatureDataFetcher$ = new OpenhabFetcher(this.openhab_baseurl + 'MultiSensor02_Temperature', this.http);
-    private _humidityDataFetcher$ = new OpenhabFetcher(this.openhab_baseurl + 'IndoorNetatmo02_Humidity', this.http);
-    private _co2DataFetcher$ = new OpenhabFetcher(this.openhab_baseurl + 'IndoorNetatmo02_Co2', this.http);
+    private _temperatureDataFetcher$ = new OpenhabFetcher(env.openhabUrl + 'MultiSensor02_Temperature', this.http);
+    private _humidityDataFetcher$ = new OpenhabFetcher(env.openhabUrl + 'IndoorNetatmo02_Humidity', this.http);
+    private _co2DataFetcher$ = new OpenhabFetcher(env.openhabUrl + 'IndoorNetatmo02_Co2', this.http);
 
     readonly lastDay = 86400;
     readonly period = 864000;
     private _scoreTimeSeriesFetcher$ = new ScoreFetcher(`${ env.scoreUrl }/score?period=${ this.period }`, this.http);
 
-    constructor(private http: HttpClient) { }
+    private _criticalCO2Level$ = new ReplaySubject<number>(1);
+
+    constructor(private http: HttpClient) {
+        this._criticalCO2Level$.next(800);
+    }
+
+    public get criticalCO2Level$(): Observable<number> { return  this._criticalCO2Level$.asObservable(); }
 
     /*
      *

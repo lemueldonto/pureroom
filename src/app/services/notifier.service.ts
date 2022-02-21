@@ -8,12 +8,12 @@ import {
   MatSnackBar,
 }                                                                                                        from '@angular/material/snack-bar';
 
+import { environment as env } from '@env';
+
 @Injectable({
               providedIn: 'root',
             })
 export class NotifierService {
-  readonly lampServiceURL = 'http://oh.sia.fp2WM5WvNEVHZogvpLOA1xGybZvtHYoOG0fdnm7cALmWptLRHpDUjo2LtcIBS9Xtd2Pgvx95WZZQRuXCdhMrQ@openhab.ubiquarium.fr/rest/items/WallPlug04_Switch';
-
   private running = false;
 
   constructor(private http: HttpClient,
@@ -23,7 +23,7 @@ export class NotifierService {
     const body = on ? 'ON' : 'OFF';
     console.log('turning lamp ', body);
     const headers = new HttpHeaders().set('Content-Type', 'text/plain');
-    return this.http.post(this.lampServiceURL, body, { headers });
+    return this.http.post(env.lampUrl, body, { headers });
   }
 
   public notify() {

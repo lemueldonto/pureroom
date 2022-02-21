@@ -1,7 +1,6 @@
+import { environmentBase } from './environment.base';
+
 export const environment = {
+    ...environmentBase,
     production: true,
-
-    avatarDir: './assets/avatars/plant/',
-
-    scoreUrl: 'http://localhost:8080',
 };

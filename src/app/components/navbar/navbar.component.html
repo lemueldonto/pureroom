@@ -82,8 +82,11 @@
                         <div class="row">
                             <div class="col-8">
                                 <div class="numbers">
-                                    <p class="text-sm mb-0 text-capitalize font-weight-bold">C02</p>
-                                    <h2 *ngIf="!(isSimulating$ | async)" class="font-weight-bolder mb-0">
+                                    <p
+                                        [ngClass]="(co2Critical$(weather.co2, 'text-sm mb-0 text-capitalize font-weight-bold') | async) ?? '' ">
+                                        C02</p>
+                                    <h2 *ngIf=" !(isSimulating$ | async) "
+                                        [ngClass]="(co2Critical$(weather.co2, 'font-weight-bolder mb-0') | async) ?? '' ">
                                         {{ weather.co2 | number: '3.0-0' }}
                                         <!--                                        <span class="text-success text-sm font-weight-bolder">+3</span>-->
                                     </h2>

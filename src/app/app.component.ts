@@ -14,9 +14,8 @@ export class AppComponent {
 
   constructor(private weatherService: WeatherService,
               private notifierService: NotifierService) {
-    const co2Critical$ = of(460);
 
-    co2Critical$.pipe(switchMap(co2Critical => {
+    this.weatherService.criticalCO2Level$.pipe(switchMap(co2Critical => {
       return this.weatherService.weatherData$
                  .pipe(map(data => data.co2),
                        filter(co2 => co2 >= co2Critical),

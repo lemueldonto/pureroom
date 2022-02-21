@@ -1,21 +1,21 @@
-import { Component, OnInit }                                                                 from '@angular/core';
+import { Component, OnInit }                                                                      from '@angular/core';
 import {
     WeatherService,
-}                                                                                            from "@services/weather.service";
+}                                                                                                 from "@services/weather.service";
 import {
     ReportService,
-}                                                                                            from '@services/report.service';
-import { filter, iif, map, Observable, pairwise, ReplaySubject, startWith, switchMap, take } from 'rxjs';
+}                                                                                                 from '@services/report.service';
+import { filter, iif, map, Observable, pairwise, ReplaySubject, startWith, switchMap, take, tap } from 'rxjs';
 import {
     SeriesPoint,
-}                                                                                            from '@interfaces/weather.interfaces';
-import { FormBuilder, FormGroup }                                                            from '@angular/forms';
+}                                                                                                 from '@interfaces/weather.interfaces';
+import { FormBuilder, FormGroup }                                                                 from '@angular/forms';
 import {
     MatSlideToggleChange,
-}                                                                                            from '@angular/material/slide-toggle';
+}                                                                                                 from '@angular/material/slide-toggle';
 import {
     SimulationService,
-}                                                                                            from '@services/simulation.service';
+}                                                                                                 from '@services/simulation.service';
 
 function isNonNull<T>(value: T): value is NonNullable<T> {
     return value !== null;
@@ -76,8 +76,16 @@ export class NavbarComponent implements OnInit {
         return `${ curr.value > prev.value ? 'text-success' : 'text-error' } text-sm font-weight-bolder`;
     }
 
-    isCO2Critical(co2: number): boolean {
-        return co2 >= 800;
+    co2Critical$(co2: number, baseClasses = ''): Observable<string> {
+        return this.weatherService.criticalCO2Level$
+            .pipe(
+                startWith(0),
+                map(critical => {
+                    if (co2 >= critical)
+                        return 'text-danger ' + baseClasses;
+                    else
+                        return baseClasses;
+                }));
     }
 
     diffMoreThan({ curr, prev }: { curr: SeriesPoint; prev: SeriesPoint | null }, eps = 0.5): boolean {
