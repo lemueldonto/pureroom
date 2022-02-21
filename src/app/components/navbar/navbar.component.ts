@@ -34,6 +34,11 @@ export class NavbarComponent implements OnInit {
 
     isSimulating$: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
 
+    _simulation$ = new ReplaySubject<SeriesPoint>(1);
+    public get simulation$(): Observable<SeriesPoint> {
+        return this._simulation$.asObservable();
+    }
+
     private static sndIsNonNull<T>(tuple: [ T, T ]): tuple is [ T, NonNullable<T> ] {
         return isNonNull(tuple[ 1 ]);
     }
@@ -53,9 +58,12 @@ export class NavbarComponent implements OnInit {
 
         this.scoreBuffer$ = this.isSimulating$
             .pipe(
+                tap(() => {
+                    this.simulationService.simulate(this.form.value)
+                        .subscribe(data => this._simulation$.next(data));
+                }),
                 switchMap(isSimulating => iif(() => isSimulating,
-                    this.form.valueChanges
-                        .pipe(switchMap(data => this.simulationService.simulate(data))),
+                    this.simulation$,
                     this.reportService.score$,
                 )),
             )
@@ -107,5 +115,10 @@ export class NavbarComponent implements OnInit {
                     co2:         data.co2,
                 });
             });
+    }
+
+    submit() {
+        this.simulationService.simulate(this.form.value)
+            .subscribe(data => this._simulation$.next(data));
     }
 }

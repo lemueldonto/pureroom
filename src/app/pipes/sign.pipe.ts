@@ -6,7 +6,7 @@ import { DecimalPipe }         from '@angular/common';
 })
 export class SignPipe implements PipeTransform {
 
-    constructor(private numberPipe: DecimalPipe) {
+    constructor(public numberPipe: DecimalPipe) {
     }
 
     transform(value: number, digitsInfo?: string): string | null {
