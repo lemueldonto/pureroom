@@ -94,10 +94,8 @@ export class NavbarComponent implements OnInit {
 
     ngOnInit(): void {
         this.weatherData = this.weatherService.weatherData$
-        this.weatherData.subscribe(x => {
-
-        })
-        this.timerSubscription = timer(0, 60000).pipe(
+        this.loadAcutual();
+        this.timerSubscription = timer(0, 900000).pipe(
             map(() => {
                  this.loadAcutual();
             })
