@@ -58,7 +58,9 @@
                                     <h2 *ngIf="!(isSimulating$ | async)"
                                         class="font-weight-bolder mb-0">
                                         {{ weather.temperature | number: '2.0-0' }}&deg;C
-<!--                                                                             <span [ngClass]="[this.oldWeather.temperature - this.actualWeather.temperature > 0 ? 'text-danger' : 'text-success']" class="text-sm font-weight-bolder">{{this.oldWeather.temperature - this.actualWeather.temperature}}</span>-->
+                                        <span
+                                            [ngClass]="[this.oldWeather.temperature - this.actualWeather.temperature > 0 ? 'text-danger' : 'text-success']"
+                                            class="text-sm font-weight-bolder">{{this.oldWeather.temperature - this.actualWeather.temperature}}</span>
                                     </h2>
 
                                     <mat-form-field *ngIf="isSimulating$ | async">
@@ -90,7 +92,9 @@
                                     <h2 *ngIf=" !(isSimulating$ | async) "
                                         [ngClass]="(co2Critical$(weather.co2, 'font-weight-bolder mb-0') | async) ?? '' ">
                                         {{ weather.co2 | number: '3.0-0' }}
-<!--                                                                             <span [ngClass]="[this.oldWeather.co2 - this.actualWeather.co2 > 0 ? 'text-danger' : 'text-success']" class="text-sm font-weight-bolder">{{this.oldWeather.co2 - this.actualWeather.co2}}</span>-->
+                                        <span
+                                            [ngClass]="[this.oldWeather.co2 - this.actualWeather.co2 > 0 ? 'text-danger' : 'text-success']"
+                                            class="text-sm font-weight-bolder">{{this.oldWeather.co2 - this.actualWeather.co2}}</span>
                                     </h2>
 
                                     <mat-form-field *ngIf="isSimulating$ | async">
@@ -118,7 +122,9 @@
                                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Humidité</p>
                                     <h2 *ngIf="!(isSimulating$ | async)" class="font-weight-bolder mb-0">
                                         {{ weather.humidity | number: '2.0-0' }}%
-<!--                                                                              <span [ngClass]="[this.oldWeather.humidity - this.actualWeather.humidity >= 0 ? 'text-success' : 'text-danger']"  class="text-sm font-weight-bolder">{{this.oldWeather.humidity - this.actualWeather.humidity}}</span>-->
+                                        <span
+                                            [ngClass]="[this.oldWeather.humidity - this.actualWeather.humidity >= 0 ? 'text-success' : 'text-danger']"
+                                            class="text-sm font-weight-bolder">{{this.oldWeather.humidity - this.actualWeather.humidity}}</span>
                                     </h2>
 
                                     <mat-form-field *ngIf="isSimulating$ | async">
@@ -145,10 +151,10 @@
                                     <p class="text-sm mb-0 text-capitalize font-weight-bold">Qualité de l'air</p>
                                     <h1 class="font-weight-bolder mb-0">
                                         {{ pair.curr.value | number : '1.0-1' }}
-<!--                                        <span *ngIf="pair.prev !== null && diffMoreThan(pair, 0.1)"-->
-<!--                                              [ngClass]="scoreChangeClasses(pair.prev, pair.curr)">-->
-<!--                                            {{ (pair.prev.value - pair.curr.value) | sign : '1.0-1' }}-->
-<!--                                        </span>-->
+                                        <!--                                        <span *ngIf="pair.prev !== null && diffMoreThan(pair, 0.1)"-->
+                                        <!--                                              [ngClass]="scoreChangeClasses(pair.prev, pair.curr)">-->
+                                        <!--                                            {{ (pair.prev.value - pair.curr.value) | sign : '1.0-1' }}-->
+                                        <!--                                        </span>-->
                                     </h1>
 
                                     <button mat-stroked-button

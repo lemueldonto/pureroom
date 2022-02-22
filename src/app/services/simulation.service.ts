@@ -19,7 +19,7 @@ export class SimulationService {
         const params = new HttpParams().appendAll({ temperature, co2, humidity });
         return this.http.get<SeriesPoint>(SimulationService.SIMULATION_URL, { params })
             .pipe(take(1),
-                tap(console.log),
+                tap(console.trace),
                 map(({ value, time }) => ( { value: value / 10., time } )));
     }
 
