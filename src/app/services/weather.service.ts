@@ -119,8 +119,7 @@ export class WeatherService {
     private _humidityDataFetcher$ = new OpenhabFetcher(env.openhabUrl + 'IndoorNetatmo02_Humidity', this.http);
     private _co2DataFetcher$ = new OpenhabFetcher(env.openhabUrl + 'IndoorNetatmo02_Co2', this.http);
 
-    readonly lastDay = 86400;
-    readonly period = 864000;
+    readonly period = 432000;
     private _scoreTimeSeriesFetcher$ = new ScoreFetcher(`${ env.scoreUrl }/score?period=${ this.period }`, this.http);
 
     private _criticalCO2Level$ = new ReplaySubject<number>(1);
