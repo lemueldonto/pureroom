@@ -7,28 +7,46 @@ import {
 }                                                                                                 from '@services/report.service';
 import { filter, iif, map, Observable, pairwise, ReplaySubject, startWith, switchMap, take, tap } from 'rxjs';
 import {
-    SeriesPoint,
-}                                                                                                 from '@interfaces/weather.interfaces';
-import { FormBuilder, FormGroup }                                                                 from '@angular/forms';
+    SeriesPoint, WeatherData,
+} from '@interfaces/weather.interfaces';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import {
     MatSlideToggleChange,
-}                                                                                                 from '@angular/material/slide-toggle';
+} from '@angular/material/slide-toggle';
 import {
     SimulationService,
-}                                                                                                 from '@services/simulation.service';
+} from '@services/simulation.service';
 
 function isNonNull<T>(value: T): value is NonNullable<T> {
     return value !== null;
 }
 
+import { Subscription, timer} from 'rxjs';
+
 @Component({
-    selector:    'app-navbar',
+    selector: 'app-navbar',
     templateUrl: './navbar.component.html',
-    styleUrls:   [ './navbar.component.css' ],
+    styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent implements OnInit {
 
     public form: FormGroup;
+
+    public weatherData: Observable<WeatherData> | undefined;
+
+    oldWeather = {
+        humidity: 0,
+        co2: 0,
+        temperature: 0,
+    }
+
+    actualWeather = {
+        humidity: 0,
+        co2: 0,
+        temperature: 0,
+    }
+
+    timerSubscription: Subscription | undefined;
 
     public readonly scoreBuffer$: Observable<{ curr: SeriesPoint, prev: SeriesPoint | null }>;
 
@@ -75,6 +93,32 @@ export class NavbarComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.weatherData = this.weatherService.weatherData$
+        this.weatherData.subscribe(x => {
+
+        })
+        this.timerSubscription = timer(0, 60000).pipe(
+            map(() => {
+                 this.loadAcutual();
+            })
+        ).subscribe();
+    }
+
+    loadAcutual() {
+        this.oldWeather = this.actualWeather;
+        this.weatherData?.subscribe(x => {
+            this.actualWeather = {
+                humidity: x.humidity,
+                temperature: x.temperature,
+                co2: x.co2
+            }
+        });
+        console.log(this.oldWeather)
+        console.log(this.actualWeather)
+    }
+
+    ngOnDestroy(): void {
+        this.timerSubscription?.unsubscribe();
     }
 
     public scoreChangeClasses(prev: SeriesPoint | null, curr: SeriesPoint): string {
